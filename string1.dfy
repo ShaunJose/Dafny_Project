@@ -1,14 +1,14 @@
 method isPrefix(pre: string, str: string) returns (res:bool)
+  requires |pre| <= |str|
+  ensures str == pre + str[|pre|..] ==> res == true
+  ensures str != pre + str[|pre|..] ==> res == false
 {
-  if |pre| > |str|
-  {
-    return false;
-  }
-
   if pre == str[0..|pre|]
   {
     return true;
   }
+
+  return false;
 }
 
 method isSubstring(sub: string, str: string) returns (res:bool)
