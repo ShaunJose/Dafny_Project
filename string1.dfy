@@ -1,4 +1,4 @@
-method isPrefix(pre: string, str: string) returns (res:bool)
+method isPrefix(pre: string, str: string) returns (res: bool)
   requires |pre| <= |str|
   ensures str == pre + str[|pre|..] ==> res == true
   ensures str != pre + str[|pre|..] ==> res == false
@@ -11,9 +11,9 @@ method isPrefix(pre: string, str: string) returns (res:bool)
   return false;
 }
 
-method isSubstring(sub: string, str: string) returns (res:bool)
+method isSubstring(sub: string, str: string) returns (res: bool)
 {
-  if |sub| > |str|
+  if |sub| > |str| //substring cant be > than string
   {
     return false;
   }
@@ -39,7 +39,7 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 
 method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: bool)
 {
-  if |str1| < k || |str2| < k
+  if |str1| < k || |str2| < k //substring of length k cant be greater than string
   {
     return false;
   }
@@ -50,7 +50,7 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
   {
     return true;
   }
-  else if |str1| >= 1
+  else if |str1| >= 1 //if it has atleast one char
   {
     var result2 := haveCommonKSubstring(k, str1[1..], str2);
 
@@ -61,22 +61,10 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 
   }
 
-  //NOTE: don't really need this
-  // var startIndex2 := 0;
-  // if (startIndex2 + k) <= |str2|
-  // {
-  //   var result := isSubstring(str1, str2[startIndex2..(startIndex2+k)]);
-  //
-  //   if result == true
-  //   {
-  //     return true;
-  //   }
-  // }
-
   return false;
 }
 
-method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
+method maxCommonSubstringLength(str1: string, str2: string) returns (len: nat)
 {
     len := 0;
 
