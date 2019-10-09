@@ -18,17 +18,15 @@ method isSubstring(sub: string, str: string) returns (res:bool)
     return false;
   }
 
-  var startIndex := 0;
-  var prefResult := isPrefix(sub, str[startIndex..|sub|]);
+  var prefResult := isPrefix(sub, str);
 
   if prefResult == true
   {
     return true;
   }
-  else if(startIndex < |str|)
+  else if(|str| >= 1) //if it has atleast 1 char
   {
-    startIndex := startIndex + 1;
-    var subResult := isSubstring(sub, str[startIndex..]);
+    var subResult := isSubstring(sub, str[1..]);
 
     if subResult == true
     {
