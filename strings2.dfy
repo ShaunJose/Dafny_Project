@@ -16,12 +16,12 @@ lemma PrefixNegationLemma(pre:string, str:string)
 
 predicate isSubstringPred(sub:string, str:string)
 {
-  exists i, j :: 0 <= i <= j <= |str| && j - i == |sub| && sub == str[i..j]
+  exists i, j :: 0 <= i <= j <= |str| && sub == str[i..j]
 }
 
 predicate isNotSubstringPred(sub:string, str:string)
 {
-	forall i, j :: 0 <= i <= j <= |str| && j - i == |sub| ==> sub != str[i..j]
+	forall i, j :: 0 <= i <= j <= |str| ==> sub != str[i..j]
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
@@ -33,12 +33,12 @@ lemma SubstringNegationLemma(sub:string, str:string)
 
 predicate haveCommonKSubstringPred(k:nat, str1:string, str2:string)
 {
-  exists a, b, c, d :: 0 <= a <= b < |str1| &&  0 <= c <= d < |str2| && (b - a) == (d - c) == k && str1[a..b] == str2[c..d]
+  exists a, b, c, d :: 0 <= a <= b <= |str1| && 0 <= c <= d <= |str2| && (b - a) == (d - c) == k && str1[a..b] == str2[c..d]
 }
 
 predicate haveNotCommonKSubstringPred(k:nat, str1:string, str2:string)
 {
-	forall a, b, c, d :: (0 <= a <= b < |str1| &&  0 <= c <= d < |str2| && (b - a) == (d - c) == k ==> str1[a..b] != str2[c..d])
+	forall a, b, c, d :: 0 <= a <= b <= |str1| &&  0 <= c <= d <= |str2| ==> !((b - a) == (d - c) == k) || str1[a..b] != str2[c..d]
 }
 
 // Sanity check: Dafny should be able to automatically prove the following lemma
