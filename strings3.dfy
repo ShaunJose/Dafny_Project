@@ -22,12 +22,20 @@ method isPrefix(pre: string, str: string) returns (res:bool)
 	ensures !res <==> isNotPrefixPred(pre,str)
 	ensures  res <==> isPrefixPred(pre,str)
 {
-	if pre == str[0..|pre|]
+
+	if(|pre| > |str|)
   {
-    return true;
+    return false;
   }
 
-  return false;
+	if(pre == str[0..|pre|])
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
 
 ///////////////////////////////////////////////////////////////
@@ -107,10 +115,16 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
     return found;
   }
 
+	assert |str1| >= k && |str2| >= k;
+
 	var lowerBound := 0;
-	while(lowerBound <= |str1|)
+	while((lowerBound + k) <= |str1|)
+		invariant lowerBound <= |str1| - k + 1
+		invariant !found <==> forall i, j :: (0 <= i < lowerBound && j == i + k && j <= |str1|  ==> isNotSubstringPred(str1[i..j], str2))
+		decreases |str1| - lowerBound
 	{
-		var result := isSubstring(str1[lowerBound..k], str2);
+		var upperBound := lowerBound + k;
+		var result := isSubstring(str1[lowerBound..upperBound], str2);
 
 		if result == true
 	  {
@@ -127,25 +141,30 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 ///////////////////////////////////////////////////////////////
 //4: maxCommonSubstringLength
 
-method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
-	requires (|str1| <= |str2|)
-	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
-	ensures haveCommonKSubstringPred(len,str1,str2)
-{
-	len := 0;
-
-	var i := 1;
-	while(i <= |str1| && i <= |str2|)
-	{
-		var result := haveCommonKSubstring(i, str1, str2);
-
-		if result == true
-		{
-			len := i;
-		}
-
-		i := i + 1;
-	}
-}
+// method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
+// 	requires (|str1| <= |str2|)
+// 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
+// 	ensures haveCommonKSubstringPred(len,str1,str2)
+// {
+// 	len := 0;
+//
+// 	var i := 1;
+// 	while(i <= |str1| && i <= |str2|)
+// 		invariant i < |str1|
+// 		invariant i < |str2|
+// 		invariant forall j :: (0 <= j < i && !haveCommonKSubstringPred(j, str1, str2))
+// 		decreases |str1| - i
+// 		decreases |str2| - i
+// 	{
+// 		var result := haveCommonKSubstring(i, str1, str2);
+//
+// 		if result == true
+// 		{
+// 			len := i;
+// 		}
+//
+// 		i := i + 1;
+// 	}
+// }
 
 
