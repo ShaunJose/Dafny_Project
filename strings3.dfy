@@ -1,12 +1,15 @@
+///////////////////////////////////////////////////////////////
+//1: isPrefix
+
 predicate isPrefixPred(pre:string, str:string)
 {
-	(|pre| <= |str|) && 
+	(|pre| <= |str|) &&
 	pre == str[..|pre|]
 }
 
 predicate isNotPrefixPred(pre:string, str:string)
 {
-	(|pre| > |str|) || 
+	(|pre| > |str|) ||
 	pre != str[..|pre|]
 }
 
@@ -19,8 +22,17 @@ method isPrefix(pre: string, str: string) returns (res:bool)
 	ensures !res <==> isNotPrefixPred(pre,str)
 	ensures  res <==> isPrefixPred(pre,str)
 {
-//TODO: insert your code here
+	if pre == str[0..|pre|]
+  {
+    return true;
+  }
+
+  return false;
 }
+
+///////////////////////////////////////////////////////////////
+//2: isSubstring
+
 predicate isSubstringPred(sub:string, str:string)
 {
 	(exists i :: 0 <= i <= |str| &&  isPrefixPred(sub, str[i..]))
@@ -40,9 +52,32 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
 	//ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
-//TODO: insert your code here
+	if |sub| > |str| //substring cant be > than string
+	{
+		return false;
+	}
+
+	var prefResult := isPrefix(sub, str);
+
+	if prefResult == true
+	{
+		return true;
+	}
+	else if(|str| >= 1) //if it has atleast 1 char
+	{
+		var subResult := isSubstring(sub, str[1..]);
+
+		if subResult == true
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
-
+
+///////////////////////////////////////////////////////////////
+//3: commonKSubstring
 
 predicate haveCommonKSubstringPred(k:nat, str1:string, str2:string)
 {
@@ -63,15 +98,53 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	ensures found  <==>  haveCommonKSubstringPred(k,str1,str2)
 	//ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
-//TODO: insert your code here
+	if |str1| < k || |str2| < k //substring of length k cant be greater than string
+  {
+    return false;
+  }
+
+  var result := isSubstring(str1[0..k], str2);
+
+  if result == true
+  {
+    return true;
+  }
+  else if |str1| >= 1 //if it has atleast one char
+  {
+    var result2 := haveCommonKSubstring(k, str1[1..], str2);
+
+    if result2 == true
+    {
+      return true;
+    }
+
+  }
+
+  return false;
 }
-
+
+///////////////////////////////////////////////////////////////
+//4: maxCommonSubstringLength
+
 method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
 	requires (|str1| <= |str2|)
 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
 	ensures haveCommonKSubstringPred(len,str1,str2)
 {
-//TODO: insert your code here
+	len := 0;
+
+	var i := 1;
+	while(i <= |str1| && i <= |str2|)
+	{
+		var result := haveCommonKSubstring(i, str1, str2);
+
+		if result == true
+		{
+			len := i;
+		}
+
+		i := i + 1;
+	}
 }
 
 
