@@ -120,11 +120,10 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	var lowerBound := 0;
 	while((lowerBound + k) <= |str1|)
 		invariant lowerBound <= |str1| - k + 1
-		invariant !found <==> forall i, j :: (0 <= i < lowerBound && j == i + k && j <= |str1|  ==> isNotSubstringPred(str1[i..j], str2))
+		invariant !found <==> forall i, j :: (0 <= i < lowerBound && j == i + k  ==> isNotSubstringPred(str1[i..j], str2))
 		decreases |str1| - lowerBound
 	{
-		var upperBound := lowerBound + k;
-		var result := isSubstring(str1[lowerBound..upperBound], str2);
+		var result := isSubstring(str1[lowerBound..lowerBound + k], str2);
 
 		if result == true
 	  {
