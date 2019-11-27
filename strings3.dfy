@@ -140,30 +140,28 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 ///////////////////////////////////////////////////////////////
 //4: maxCommonSubstringLength
 
-// method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
-// 	requires (|str1| <= |str2|)
-// 	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
-// 	ensures haveCommonKSubstringPred(len,str1,str2)
-// {
-// 	len := 0;
-//
-// 	var i := 1;
-// 	while(i <= |str1| && i <= |str2|)
-// 		invariant i < |str1|
-// 		invariant i < |str2|
-// 		invariant forall j :: (0 <= j < i && !haveCommonKSubstringPred(j, str1, str2))
-// 		decreases |str1| - i
-// 		decreases |str2| - i
-// 	{
-// 		var result := haveCommonKSubstring(i, str1, str2);
-//
-// 		if result == true
-// 		{
-// 			len := i;
-// 		}
-//
-// 		i := i + 1;
-// 	}
-// }
+method maxCommonSubstringLength(str1: string, str2: string) returns (len:nat)
+	requires (|str1| <= |str2|)
+	ensures (forall k :: len < k <= |str1| ==> !haveCommonKSubstringPred(k,str1,str2))
+	ensures haveCommonKSubstringPred(len,str1,str2)
+{
+	len := |str1|;
+
+	while(len > 0)
+		invariant forall i :: (len < i <= |str1| ==> !haveCommonKSubstringPred(i, str1, str2))
+		decreases len
+	{
+		var kSubsRes := haveCommonKSubstring(len, str1, str2);
+		if kSubsRes == true
+		{
+			return len;
+		}
+		len := len - 1;
+	}
+	
+	assert isPrefixPred(str1[0..0], str2[0..]); //incase len becomes 0
+	return len;
+
+}
 
 
