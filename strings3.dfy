@@ -52,28 +52,30 @@ method isSubstring(sub: string, str: string) returns (res:bool)
 	ensures  res <==> isSubstringPred(sub, str)
 	//ensures !res <==> isNotSubstringPred(sub, str) // This postcondition follows from the above lemma.
 {
+	res := false;
+
 	if |sub| > |str| //substring cant be > than string
 	{
-		return false;
+		return res;
 	}
 
-	var prefResult := isPrefix(sub, str);
-
-	if prefResult == true
+	var lowerBound := 0;
+	while(lowerBound <= |str|)
+		invariant 0 <= lowerBound <= |str| + 1
+		invariant !res <==> forall i ::( 0 <= i < lowerBound ==> isNotPrefixPred(sub, str[i..]))
+		decreases |str| - lowerBound
 	{
-		return true;
-	}
-	else if(|str| >= 1) //if it has atleast 1 char
-	{
-		var subResult := isSubstring(sub, str[1..]);
+		var prefResult := isPrefix(sub, str[lowerBound..]);
 
-		if subResult == true
+		if prefResult == true
 		{
 			return true;
+			break;
 		}
+		lowerBound := lowerBound + 1;
 	}
 
-	return false;
+	return res;
 }
 
 ///////////////////////////////////////////////////////////////
@@ -98,29 +100,28 @@ method haveCommonKSubstring(k: nat, str1: string, str2: string) returns (found: 
 	ensures found  <==>  haveCommonKSubstringPred(k,str1,str2)
 	//ensures !found <==> haveNotCommonKSubstringPred(k,str1,str2) // This postcondition follows from the above lemma.
 {
+	found := false;
+
 	if |str1| < k || |str2| < k //substring of length k cant be greater than string
   {
-    return false;
+    return found;
   }
 
-  var result := isSubstring(str1[0..k], str2);
+	var lowerBound := 0;
+	while(lowerBound <= |str1|)
+	{
+		var result := isSubstring(str1[lowerBound..k], str2);
 
-  if result == true
-  {
-    return true;
-  }
-  else if |str1| >= 1 //if it has atleast one char
-  {
-    var result2 := haveCommonKSubstring(k, str1[1..], str2);
+		if result == true
+	  {
+	    found := true;
+			break;
+	  }
 
-    if result2 == true
-    {
-      return true;
-    }
+		lowerBound := lowerBound + 1;
+	}
 
-  }
-
-  return false;
+  return found;
 }
 
 ///////////////////////////////////////////////////////////////
